@@ -1,0 +1,51 @@
+<?php
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminProductController;
+use App\Http\Controllers\CheckoutController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AuthController;
+
+
+Route::get('/', [ProductController::class, 'index'])->name('home');
+// routes/web.php
+
+Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+
+Route::get('/cart', [ProductController::class, 'cart'])->name('cart.view');
+Route::post('/add-to-cart/{id}', [ProductController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/update', [ProductController::class, 'updateCart'])->name('cart.update');
+Route::get('/cart/remove/{id}', [ProductController::class, 'removeFromCart'])->name('cart.remove');
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [ProductController::class, 'checkout'])->name('checkout');
+    Route::get('/checkout/{id}', [ProductController::class, 'checkoutSingle'])->name('checkout.single');
+    Route::post('/checkout/place-order', [ProductController::class, 'placeOrder'])->name('checkout.place');
+});
+
+// Auth Routes
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+
+//admin routes
+
+Route::prefix('admin')->group(function () {
+    Route::get('login', [AdminController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('login', [AdminController::class, 'login'])->name('admin.login.submit');
+    Route::get('dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    
+    // Product management
+    Route::get('products', [AdminProductController::class, 'index'])->name('admin.products.index');
+    Route::get('products/create', [AdminProductController::class, 'create'])->name('admin.products.create');
+    Route::post('products/store', [AdminProductController::class, 'store'])->name('admin.products.store');
+    Route::get('products/{id}/edit', [AdminProductController::class, 'edit'])->name('admin.products.edit');
+Route::put('products/{id}', [AdminProductController::class, 'update'])->name('admin.products.update');
+Route::delete('products/{id}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
+
+});
+
+
