@@ -48,7 +48,7 @@
                         </div>
 
                         <!-- Category -->
-                        {{-- <div class="form-group mb-4">
+                        <div class="form-group mb-4">
                             <label for="category" class="font-weight-bold text-primary">Category</label>
                             <select name="category_id" id="category" class="form-control @error('category_id') is-invalid @enderror" required>
                                 <option value="">Select a category</option>
@@ -61,7 +61,7 @@
                             @error('category_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div> --}}
+                        </div>
                     </div>
 
                     <!-- Right Column -->

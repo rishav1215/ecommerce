@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('title', $product->name)
+@section('title')
 @section('content')
 <div class="container py-5">
     <!-- Breadcrumb -->

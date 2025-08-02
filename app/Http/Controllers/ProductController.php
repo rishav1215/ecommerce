@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -12,6 +13,7 @@ class ProductController extends Controller
         'name' => 'required|string',
         'price' => 'required|numeric',
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'description' => 'nullable',
     ]);
 
     $product = new Product;
@@ -36,8 +38,9 @@ class ProductController extends Controller
     // Homepage
     public function index()
     {
+         $categories = Category::all();
         $products = Product::latest()->get();
-        return view('frontend.home', compact('products'));
+        return view('frontend.home', compact('products', 'categories'));
     }
 
         // Product Detail
@@ -51,7 +54,9 @@ class ProductController extends Controller
                             ->take(4)
                             ->get();
 
-        return view('frontend.product', compact('product', 'relatedProducts'));
+
+         $categories = Category::all();
+        return view('frontend.product', compact('product', 'relatedProducts', 'categories'));
     }
 
 
@@ -59,10 +64,25 @@ class ProductController extends Controller
   
 
     // Checkout Page (protected)
-    public function checkout()
-    {
-        return view('frontend.checkout');
+   public function checkout()
+{
+    $cart = session('cart', []);
+
+    if (empty($cart)) {
+        return redirect()->route('home')->with('error', 'Your cart is empty.');
     }
+
+    $firstProductId = array_key_first($cart); // pehla product id
+    $product = Product::find($firstProductId);
+       $cart = session('cart', []);
+
+    if (!$product) {
+        return redirect()->route('cart.view')->with('error', 'Product not found.');
+    }
+
+    return view('frontend.checkout', compact('product', ));
+}
+
     public function addToCart($id)
     {
         $product = Product::findOrFail($id);
@@ -113,9 +133,21 @@ class ProductController extends Controller
 public function checkoutSingle($id)
 {
     $product = Product::findOrFail($id);
-    return view('frontend.checkout', compact('product'));
+    
+    // Create a temporary cart array with just this product
+    $cart = [
+        $id => [
+            'quantity' => 1,
+            'price' => $product->price,
+            // Add other necessary fields
+        ]
+    ];
+    
+    return view('frontend.checkout', [
+        'cart' => $cart,
+        'product' => $product
+    ]);
 }
-
 // Place Order Logic
 public function placeOrder(Request $request)
 {
@@ -132,6 +164,27 @@ public function placeOrder(Request $request)
     return redirect()->route('home')->with('success', 'Order placed successfully!');
 }
 
+
+public function categoryProducts($slug)
+{
+    $category = Category::where('slug', $slug)->firstOrFail();
+    $products = Product::where('category_id', $category->id)->get();
+
+    $categories = Category::all(); // For sidebar
+    return view('frontend.category', compact('category', 'products', 'categories'));
+}
+
+
+public function search(Request $request)
+{
+    $query = $request->input('query');
+
+    $products = Product::where('name', 'LIKE', "%{$query}%")
+                    ->orWhere('description', 'LIKE', "%{$query}%")
+                    ->get();
+
+    return view('frontend.search_results', compact('products', 'query'));
+}
 
 
 }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Str;
 
@@ -16,7 +18,8 @@ class AdminProductController extends Controller
 
     public function create()
     {
-        return view('admin.products.create');
+         $categories = Category::all();
+        return view('admin.products.create', compact('categories'));
     }
 
   public function store(Request $request)
@@ -80,6 +83,13 @@ public function destroy($id)
     $product->delete();
 
     return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully.');
+}
+
+
+public function showUsers()
+{
+    $users = User::latest()->get();
+    return view('admin.users', compact('users'));
 }
 
 

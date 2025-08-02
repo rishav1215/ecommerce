@@ -163,6 +163,12 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
+                 <li class="nav-item">
+                    <a href="{{url('/admin/categories')}}" class="nav-link">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span>categories</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="{{route('admin.products.index')}}" class="nav-link">
                         <i class="fas fa-fw fa-box"></i>
@@ -170,7 +176,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{route('admin.users')}}" class="nav-link">
                         <i class="fas fa-fw fa-users"></i>
                         <span>Users</span>
                     </a>
@@ -251,7 +257,7 @@
                             Settings
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                        <a class="dropdown-item" href="{{route('admin.login')}}" data-toggle="modal" data-target="#logoutModal">
                             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                             Logout
                         </a>
